@@ -1,6 +1,7 @@
 // Mesa Carrinho
 //
 // (c) 2014 Afonso Coutinho <afonso@yack.com.br>
+// (c) 2014 Felipe Sanches <juca@members.fsf.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,8 +16,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-cube([155,104,4], center= true);	
-	translate([32,23,25]){cube([30,6,50], center= true);}
-	translate([-32,23,25]){cube([30,6,50], center= true);}
-	translate([32,-23,25]){cube([30,6,50], center= true);}
-	translate([-32,-23,25]){cube([30,6,50], center= true);}
+module Mesa_Carrinho(){
+	cube([155,104,4], center=true);
+
+	for (i=[-1,1]){
+		for (j=[-1,1]){
+			translate([32*i, 23*j, 25])
+			cube([30,6,50], center=true);
+		}
+	}
+}
+
+Mesa_Carrinho();
