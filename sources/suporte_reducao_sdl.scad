@@ -1,6 +1,7 @@
 // Suporte Redução SDL
 //
 // (c) 2014 Afonso Coutinho <afonso@yack.com.br>
+// (c) 2014 Felipe Sanches <juca@members.fsf.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,48 +16,53 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-difference(){
-	cube([70,60,4],center = true);
-	translate([6,0,0])
-	cube([26,46,10], center = true);
-	translate([-24,0,0])
-	cube([6,46,10], center = true);
-}
-translate([6,0,0])
-cube([14,46,4], center = true);
-
-translate([27,28,11]){
+module bottom_plate(){
+	linear_extrude(height = 4)
 	difference(){
-	cube([16,4,20],center = true);
-	translate([-2,0,0])
-	cube([3,10,12],center = true);
+		square([70,60], center = true);
+
+		for (i=[0:2])
+			translate([-24 + 20*i, 0])
+			square([6,46], center = true);
 	}
 }
 
-translate([27,-28,11]){
+module lateral(){
+//lateral com janela
+	rotate([90,0])
+	linear_extrude(height=4)
 	difference(){
-	cube([16,4,20],center = true);
-	translate([-2,0,0])
-	cube([3,10,12],center = true);
+		square([16,23]);
+
+		translate([4.5,7])
+		square([3,12]);
+	}
+
+//triangulo de trás
+	translate([16,0])
+	rotate([0,-90])
+	linear_extrude(height=4)
+	mirror([0,1])
+	hull(){
+		square([23,4]);
+		square([4,20]);
 	}
 }
 
-translate([33,18,11]){
-	rotate([0,0,90])
-	difference(){
-	cube([16,4,20],center = true);
-	rotate([0,-51.4,0])
-	translate([0,0,10])
-	cube([30,10,20],center = true);
+module simetria_em_Y(){
+	child(0);
+
+	mirror([0,1])
+	child(0);
+}
+
+module Suporte_Reducao_SDL(){
+	bottom_plate();
+
+	simetria_em_Y(){
+		translate([19,30])
+		lateral();
 	}
 }
 
-translate([33,-18,11]){
-	rotate([0,0,-90])
-	difference(){
-	cube([16,4,20],center = true);
-	rotate([0,-51.4,0])
-	translate([0,0,10])
-	cube([30,10,20],center = true);
-	}
-}
+Suporte_Reducao_SDL();
