@@ -1,6 +1,7 @@
 // Chassi Seguidor de Linha
 //
 // (c) 2014 Afonso Coutinho <afonso@yack.com.br>
+// (c) 2014 Felipe Sanches <juca@members.fsf.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,113 +17,91 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 $fn = 80;
-difference(){
+
+module curva_externa_2d(){
 	minkowski(){
-	cube([110,11,5], center = true);
-	cylinder(r=4, h=2, center=true);
+		square([110,11], center=true);
+		circle(r=4);
 	}
-	translate([0,0,-4]){
-		cube([8.2,7.2,16], center = true);
+
+	minkowski(){
+		square([10,100], center=true);
+		circle(r=4);
 	}
-	translate([25,0,-4]){
-		cube([8.2,7.2,16], center = true);
-	}
-	translate([-25,0,-4]){
-		cube([8.2,7.2,16], center = true);
-	}
-	translate([49,0,-4]){
-		cube([8.2,7.2,16], center = true);
-	}
-	translate([-49,0,-4]){
-		cube([8.2,7.2,16], center = true);
-	}
-	translate([0,0,2]){
-		cube([100,7.2,6], center = true);
-	}
-}
-translate([0,30,0]){
-	difference(){
-		minkowski(){
-		cube([10,40,3], center = true);
-		cylinder(r=4, h=4, center=true);		
-		}
-		translate([0,18,0]){
-			cylinder(r=3, h=10, center = true);
-		}
-		translate([0,10,0]){
-			cylinder(r=2.6, h=10, center = true);
-		}
-		translate([0,-20,0]){
-			cube([5,50,10], center=true);
+
+	//arredondamento dos cantos internos
+	for (i=[0:3]){
+		rotate(90*i){
+			difference(){
+				translate([24, 26])
+				square([40,40], center=true);
+
+				translate([39.5, 40])
+				circle(r=31.1);
+			}
 		}
 	}
-}
-translate([0,-34,0]){
-	difference(){
-		minkowski(){
-		cube([10,49,3], center = true);
-		cylinder(r=4, h=4, center=true);		
+
+	translate([0, -56]){
+		difference(){
+			minkowski(){
+				square([54,11], center = true);
+				circle(r=4);
+			}
+
+			for (i=[-1,1])
+				for (j=[-1,1])
+					translate([19*i, 13*j])
+					square([10,10], center=true);
 		}
-	}
-}
-difference(){
-	translate([0,-56,0]){
-		minkowski(){
-			cube([54,11,5], center = true);
-			cylinder(r=4, h=2, center=true);
-		}
-	}
-	translate([19,-43,0]){
-		cube([10,10,10], center=true);
-	}
-	translate([-19,-69,0]){
-		cube([10,10,10], center=true);
-	}
-	translate([-19,-43,0]){
-		cube([10,10,10], center=true);
-	}
-	translate([19,-69,0]){
-		cube([10,10,10], center=true);
 	}
 }
 
-rotate([180,0,0]){
-difference(){
-	translate([24,26,0]){
-		cube([40,40,7], center=true);
-	}
-	translate([39.5,40,0]){
-		cylinder(r=31.1,h=10,center=true);
-	}
+module furos(){
+	square([8.2, 7.2], center=true);
+
+	translate([25, 0])
+	square([8.2, 7.2], center=true);
+
+	translate([-25, 0])
+	square([8.2, 7.2], center=true);
+
+	translate([49, 0])
+	square([8.2, 7.2], center=true);
+
+	translate([-49, 0])
+	square([8.2, 7.2], center=true);
+
+	translate([0, 48])
+	circle(r=3);
+
+	translate([0, 40])
+	circle(r=2.6);
+
+	translate([0, 22.5])
+	square([5,26], center=true);
 }
-}
-rotate([180,180,0]){
-difference(){
-	translate([24,26,0]){
-		cube([40,40,7], center=true);
-	}
-	translate([39.5,40,0]){
-		cylinder(r=31.1,h=10,center=true);
-	}
-}
-}
-rotate([0,180,0]){
-difference(){
-	translate([24,26,0]){
-		cube([40,40,7], center=true);
-	}
-	translate([39.5,40,0]){
-		cylinder(r=31.1,h=10,center=true);
-	}
-}
-}
-rotate([0,0,0]){
-difference(){
-	translate([24,26,0]){
-		cube([40,40,7], center=true);
-	}
-	translate([39.5,40,0]){
-		cylinder(r=31.1,h=10,center=true);
+
+module curva_com_furos_2d(){
+	difference(){
+		curva_externa_2d();
+		furos();
 	}
 }
+
+module Chassi_Seguidor_de_Linha(lasercutter=false){
+	if (lasercutter){
+		curva_com_furos_2d();
+	} else {
+		difference(){
+			linear_extrude(height=7)
+			curva_com_furos_2d();
+
+		//Esse rebaixado é a unica parte que não dá pra fazer com uma laser-cutter:
+			translate([0,0,5.5])
+			cube([100, 7.2, 6], center=true);
+		}
+	}
 }
+
+Chassi_Seguidor_de_Linha();

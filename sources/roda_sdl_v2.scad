@@ -1,6 +1,7 @@
 // Roda SDL versão 2
 //
 // (c) 2014 Afonso Coutinho <afonso@yack.com.br>
+// (c) 2014 Felipe Sanches <juca@members.fsf.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,38 +17,45 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 $fn = 100;
-difference(){
-translate([0,0,2]) cylinder(r=17,h=10,center=true);
-translate([0,0,0]) cylinder(r=12,h=15,center=true);
+
+module Roda_SDL_v2(){
+	roda();
+	aros();
+	eixo();
 }
 
-difference(){
-translate([0,0,2]) cylinder(r=4,h=10,center=true);
-translate([0,0,4]) cylinder(r=1.1,h=10,center=true);
+module roda(){
+	linear_extrude(height=10)
+	difference(){
+		circle(r=17);
+		circle(r=12);
+	}
 }
 
-difference(){
-translate([8.3,10,0]) difference(){
-cylinder(r=17,h=6,center=true);
-translate([3,-6,0]) cylinder(r=12,h=15,center=true);
+module aros(){
+	aro();
+	rotate(180) aro();
 }
 
-translate([0,0,0]) difference(){
-cylinder(r=40,h=10,center=true);
-translate([0,0,0]) cylinder(r=17,h=15,center=true);
-}
-translate([0,0,4]) cylinder(r=2.6,h=10,center=true);
+module aro(){
+	linear_extrude(height=6)
+	intersection(){
+		//lua
+		difference(){
+			translate([-8.3,-10]) circle(r=17);
+			translate([-11.3,-4]) circle(r=12);
+		}
+
+		//limite para fazer o aro ficar apenas dentro da roda:
+		circle(r=17);
+	}
 }
 
-difference(){
-translate([-8.3,-10,0]) difference(){
-cylinder(r=17,h=6,center=true);
-translate([-3,6,0]) cylinder(r=12,h=15,center=true);
+module eixo(){
+	difference(){
+		cylinder(r=4,h=10);
+		translate([0,0,2]) cylinder(r=1.1, h=10);
+	}
 }
 
-translate([0,0,0]) difference(){
-cylinder(r=40,h=10,center=true);
-translate([0,0,0]) cylinder(r=17,h=15,center=true);
-}
-translate([0,0,4]) cylinder(r=2.6,h=10,center=true);
-}
+Roda_SDL_v2();
